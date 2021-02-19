@@ -8,8 +8,9 @@ import TableBody from "@material-ui/core/TableBody";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import { makeStyles } from "@material-ui/core/styles";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   root: {
     witdh: "100%",
     marginTop: 30,
@@ -18,16 +19,32 @@ const useStyles = makeStyles({
   table: {
     minWidth: 1080,
   },
-});
+  progress: {
+    marginTop: 20,
+  },
+}));
 
 function App() {
-  const [customers, setCustomers] = useState([]);
+  const [customers, setCustomers] = useState("");
+  const [progress, setProgress] = useState(0);
+  const classes = useStyles();
 
   useEffect(() => {
     // componentDidMount
+    const timer = setInterval(() => {
+      setProgress((prev) => (prev >= 100 ? 0 : prev + 1));
+    }, 20);
+
     callApi()
       .then((res) => setCustomers(res))
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err))
+      .finally(() => {
+        clearInterval(timer);
+      });
+
+    return () => {
+      clearInterval(timer);
+    };
   }, []);
 
   const callApi = async () => {
@@ -36,7 +53,6 @@ function App() {
     return body;
   };
 
-  const classes = useStyles();
   return (
     <Paper className={classes.root}>
       <Table className={classes.table}>
@@ -51,19 +67,31 @@ function App() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {customers.map((customer) => {
-            return (
-              <Customer
-                key={customer.id}
-                id={customer.id}
-                img={customer.image}
-                name={customer.name}
-                birthday={customer.birthday}
-                gender={customer.gender}
-                job={customer.job}
-              ></Customer>
-            );
-          })}
+          {customers ? (
+            customers.map((customer) => {
+              return (
+                <Customer
+                  key={customer.id}
+                  id={customer.id}
+                  img={customer.image}
+                  name={customer.name}
+                  birthday={customer.birthday}
+                  gender={customer.gender}
+                  job={customer.job}
+                ></Customer>
+              );
+            })
+          ) : (
+            <TableRow>
+              <TableCell colSpan="6" align="center">
+                <CircularProgress
+                  className={classes.progress}
+                  variant="determinate"
+                  value={progress}
+                ></CircularProgress>
+              </TableCell>
+            </TableRow>
+          )}
         </TableBody>
       </Table>
     </Paper>

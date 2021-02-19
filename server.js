@@ -45,3 +45,4 @@ app.get("/api/customers", (req, res) => {
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
 // rest api - 서버와 클라이언트가 웹 프로토콜을 기반으로 효과적으로 데이터를 주고받을 수 있게 해줌.
+// create - post / read - get / update - put / delete - delete
