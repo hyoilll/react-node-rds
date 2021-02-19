@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Customer from "./components/Customer";
+import CustomerAdd from "./components/CustomerAdd";
 
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
@@ -29,6 +30,15 @@ function App() {
   const [progress, setProgress] = useState(0);
   const classes = useStyles();
 
+  const stateRefresh = () => {
+    setCustomers("");
+    setProgress(0);
+
+    callApi()
+      .then((res) => setCustomers(res))
+      .catch((err) => console.log(err));
+  };
+
   useEffect(() => {
     // componentDidMount
     const timer = setInterval(() => {
@@ -54,47 +64,50 @@ function App() {
   };
 
   return (
-    <Paper className={classes.root}>
-      <Table className={classes.table}>
-        <TableHead>
-          <TableRow>
-            <TableCell align="center">Id</TableCell>
-            <TableCell align="center">Image</TableCell>
-            <TableCell align="center">Name</TableCell>
-            <TableCell align="center">Birthday</TableCell>
-            <TableCell align="center">Sex</TableCell>
-            <TableCell align="center">Job</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {customers ? (
-            customers.map((customer) => {
-              return (
-                <Customer
-                  key={customer.id}
-                  id={customer.id}
-                  img={customer.image}
-                  name={customer.name}
-                  birthday={customer.birthday}
-                  gender={customer.gender}
-                  job={customer.job}
-                ></Customer>
-              );
-            })
-          ) : (
+    <div>
+      <Paper className={classes.root}>
+        <Table className={classes.table}>
+          <TableHead>
             <TableRow>
-              <TableCell colSpan="6" align="center">
-                <CircularProgress
-                  className={classes.progress}
-                  variant="determinate"
-                  value={progress}
-                ></CircularProgress>
-              </TableCell>
+              <TableCell align="center">Id</TableCell>
+              <TableCell align="center">Image</TableCell>
+              <TableCell align="center">Name</TableCell>
+              <TableCell align="center">Birthday</TableCell>
+              <TableCell align="center">Sex</TableCell>
+              <TableCell align="center">Job</TableCell>
             </TableRow>
-          )}
-        </TableBody>
-      </Table>
-    </Paper>
+          </TableHead>
+          <TableBody>
+            {customers ? (
+              customers.map((customer) => {
+                return (
+                  <Customer
+                    key={customer.id}
+                    id={customer.id}
+                    img={customer.image}
+                    name={customer.name}
+                    birthday={customer.birthday}
+                    gender={customer.gender}
+                    job={customer.job}
+                  ></Customer>
+                );
+              })
+            ) : (
+              <TableRow>
+                <TableCell colSpan="6" align="center">
+                  <CircularProgress
+                    className={classes.progress}
+                    variant="determinate"
+                    value={progress}
+                  ></CircularProgress>
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </Paper>
+      <CustomerAdd stateRefresh={stateRefresh}></CustomerAdd>
+    </div>
   );
 }
 

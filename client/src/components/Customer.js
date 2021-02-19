@@ -9,7 +9,7 @@ const Customer = ({ id, img, name, birthday, gender, job }) => {
       <TableRow key={id}>
         <TableCell align="center">{id}</TableCell>
         <TableCell align="center">
-          <img src={img} alt="profile"></img>
+          <img src={img} alt="profile" width="64" height="64"></img>
         </TableCell>
         <TableCell align="center">{name}</TableCell>
         <TableCell align="center">{birthday}</TableCell>
