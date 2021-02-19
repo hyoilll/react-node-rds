@@ -31,16 +31,20 @@ const upload = multer({ dest: "./upload" });
 
 //클라이언트가 서버에 접속시 json 으로 반환해줌
 app.get("/api/customers", (req, res) => {
-  connection.query("select * from customer", (err, rows, fields) => {
-    res.send(rows);
-  });
+  connection.query(
+    "select * from customer where isDeleted = 0",
+    (err, rows, fields) => {
+      res.send(rows);
+    }
+  );
 });
 
 // 사용자가 image폴더에 접근하면 서버의 upload로 매핑됨
 app.use("/image", express.static("./upload"));
 
 app.post("/api/customers", upload.single("image"), (req, res) => {
-  const sql = "insert into customer values(null, ?, ?, ?, ?, ?)";
+  // id, image, name, birthday, gender, job, createdDate, isDeleted
+  const sql = "insert into customer values(null, ?, ?, ?, ?, ?, now(), 0)";
   const image = "/image/" + req.file.filename;
   const name = req.body.name;
   const birthday = req.body.birthday;
@@ -48,6 +52,14 @@ app.post("/api/customers", upload.single("image"), (req, res) => {
   const job = req.body.job;
   const params = [image, name, birthday, gender, job];
   connection.query(sql, params, (err, rows, fields) => {
+    res.send(rows);
+  });
+});
+
+app.delete("/api/customers/:id", (req, res) => {
+  const sql = "update customer set isDeleted = 1 where id = ?";
+  const params = [req.params.id];
+  connection.query(sql, params, (err, rows, fileds) => {
     res.send(rows);
   });
 });

@@ -75,6 +75,7 @@ function App() {
               <TableCell align="center">Birthday</TableCell>
               <TableCell align="center">Sex</TableCell>
               <TableCell align="center">Job</TableCell>
+              <TableCell align="center">Setting</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -89,6 +90,7 @@ function App() {
                     birthday={customer.birthday}
                     gender={customer.gender}
                     job={customer.job}
+                    stateRefresh={stateRefresh}
                   ></Customer>
                 );
               })
