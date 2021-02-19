@@ -1,3 +1,4 @@
+const fs = require("fs"); // 파일 접근
 const express = require("express");
 const bodyParser = require("body-parser");
 
@@ -12,34 +13,24 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //   res.send({ message: "Hello Express!" });
 // });
 
+const data = fs.readFileSync("./database.json");
+const conf = JSON.parse(data);
+const mysql = require("mysql");
+
+const connection = mysql.createConnection({
+  host: conf.host,
+  user: conf.user,
+  password: conf.password,
+  port: conf.port,
+  database: conf.database,
+});
+connection.connect();
+
 //클라이언트가 서버에 접속시 json 으로 반환해줌
 app.get("/api/customers", (req, res) => {
-  res.send([
-    {
-      id: 1,
-      image: "https://placeimg.com/64/64/1",
-      name: "lee hyo il",
-      birthday: 930727,
-      gender: "man",
-      job: "student",
-    },
-    {
-      id: 2,
-      image: "https://placeimg.com/64/64/2",
-      name: "sana",
-      birthday: 900322,
-      gender: "woman",
-      job: "student",
-    },
-    {
-      id: 3,
-      image: "https://placeimg.com/64/64/3",
-      name: "mina",
-      birthday: 940808,
-      gender: "woman",
-      job: "teacher",
-    },
-  ]);
+  connection.query("select * from customer", (err, rows, fields) => {
+    res.send(rows);
+  });
 });
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
